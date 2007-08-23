@@ -228,8 +228,7 @@ my $build = $class->new
 	
 	#~ script_files => 'script/xxx.pl',
 	dist_author  => 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>',
-	dist_abstract => 'Make tuples from lists
-',
+	dist_abstract => 'Make tuples from lists',
 	);
 	
 $build->create_build_script;

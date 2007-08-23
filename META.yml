@@ -1,9 +1,9 @@
 ---
 name: List-Tuples
-version: 0.01
+version: 0.02
 author:
   - 'Khemir Nadim ibn Hamouda. <nadim@khemir.net>'
-abstract: "Make tuples from lists\n"
+abstract: Make tuples from lists
 license: perl
 resources:
   license: http://dev.perl.org/licenses/
@@ -27,7 +27,7 @@ requires:
 provides:
   List::Tuples:
     file: lib/List/Tuples.pm
-    version: 0.01
+    version: 0.02
 generated_by: Module::Build version 0.2806
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

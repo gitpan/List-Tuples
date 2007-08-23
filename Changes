@@ -1,0 +1,4 @@
+0.02
+	FIXED: missing exports
+	CHANGED: some POD
+	FIXED: forgot to bundle the tests
