@@ -209,6 +209,8 @@ my $build = $class->new
 		'Sub::Exporter'     => 0,
 		'Data::TreeDumper' => 0,
 		'version'    => 0.50,
+		'Carp::Diagnostics' => 0,
+		
 		
 		'Test::Block' => 0,
 		'Test::Dependencies' => 0,

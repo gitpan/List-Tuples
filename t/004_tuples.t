@@ -14,18 +14,21 @@ use Test::Block qw($Plan);
 
 use List::Tuples qw(:all); 
 
+use Carp::Diagnostics (qw(UseLongMessage));
+UseLongMessage(0) ;
+
 {
 local $Plan = {'ref_mesh' => 8} ;
 
 throws_ok
 	{
 	ref_mesh(1, 1, 1) ;
-	} qr/element 0 is not an array reference/, 'bad argument' ;
+	} qr/element '0' is not an array reference/, 'bad argument' ;
 	
 throws_ok
 	{
 	ref_mesh(undef, []) ;
-	} qr/element 0 is not an array reference/, 'bad argument' ;
+	} qr/element '0' is not an array reference/, 'bad argument' ;
 
 lives_ok
 	{
@@ -83,32 +86,32 @@ local $Plan = {'tuples' => 14} ;
 throws_ok
 	{
 	tuples() ;
-	} qr/Error: List::Tuples::tuples expects an array reference as size argument/, 'no arguments' ;
+	} qr/Error: List::Tuples::tuples expects an array reference as size/, 'no arguments' ;
 
 throws_ok
 	{
 	tuples(1, 1, 1) ;
-	} qr/Error: List::Tuples::tuples expects an array reference as size argument/, 'bad size argument' ;
+	} qr/Error: List::Tuples::tuples expects an array reference as size/, 'bad size argument' ;
 
 throws_ok
 	{
 	tuples(1, undef, 1) ;
-	} qr/Error: List::Tuples::tuples expects an array reference as size argument/, 'bad size argument' ;
+	} qr/Error: List::Tuples::tuples expects an array reference as size/, 'bad size argument' ;
 
 throws_ok
 	{
 	my @list = tuples[] ;
-	} qr/Error: List::Tuples::tuples expects a positive tuple size/, 'no size argument' ;
+	} qr/Error: List::Tuples::tuples expects a tuple size/, 'no size argument' ;
 
 throws_ok
 	{
 	tuples(1, [0]) ;
-	} qr/Error: List::Tuples::tuples expects a positive tuple size/, 'bad size argument' ;
+	} qr/Error: List::Tuples::tuples expects tuple size to be positive/, 'bad size argument' ;
 
 throws_ok
 	{
 	tuples(0, [2]) ;
-	} qr/Error: List::Tuples::tuples expects a positive tuple limit/, 'bad limit' ;
+	} qr/Error: List::Tuples::tuples expects tuple limit to be positive/, 'bad limit' ;
 
 lives_ok
 	{
@@ -146,27 +149,27 @@ local $Plan = {'hash tuples' => 13} ;
 throws_ok
 	{
 	hash_tuples() ;
-	} qr/Error: List::Tuples::hash_tuples expects an array reference as size argument/, 'no arguments' ;
+	} qr/Error: List::Tuples::hash_tuples expects an array reference to define the keys/, 'no arguments' ;
 
 throws_ok
 	{
 	hash_tuples(1, 1, 1) ;
-	} qr/Error: List::Tuples::hash_tuples expects an array reference as size argument/, 'bad size argument' ;
+	} qr/Error: List::Tuples::hash_tuples expects an array reference to define the keys/m, 'bad key list' ;
 
 throws_ok
 	{
 	hash_tuples(1, undef, 1) ;
-	} qr/Error: List::Tuples::hash_tuples expects an array reference as size argument/, 'bad size argument' ;
+	} qr/Error: List::Tuples::hash_tuples expects an array reference to define the keys/m, 'bad key list' ;
 
 throws_ok
 	{
 	hash_tuples(1, []) ;
-	} qr/Error: List::Tuples::hash_tuples expects a list of keys/, 'bad size argument' ;
+	} qr/Error: List::Tuples::hash_tuples expects at least one key in the key list/, 'bad key list' ;
 
 throws_ok
 	{
 	hash_tuples(0, ['key']) ;
-	} qr/Error: List::Tuples::hash_tuples expects a positive tuple limit/, 'bad limit' ;
+	} qr/Error: List::Tuples::hash_tuples expects tuple limit to be positive/, 'bad limit' ;
 
 lives_ok
 	{

@@ -16,12 +16,12 @@ use Sub::Exporter -setup =>
 	};
 	
 use vars qw ($VERSION);
-$VERSION     = 0.02;
+$VERSION = 0.03;
 }
 
 #-------------------------------------------------------------------------------
 
-use Carp qw(carp croak confess) ;
+use Carp::Diagnostics qw(cluck carp croak confess) ;
 
 #-------------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ List::Tuples - Makes tuples from lists
 	
 	#-------------------------------------------------------
 	
-	my @meshed_list =ref_mesh([1 .. 3], ['a' .. 'b'], ['*']) ;
+	my @meshed_list = ref_mesh([1 .. 3], ['a' .. 'b'], ['*']) ;
 		
 	# is equivalent to:
 	
@@ -110,11 +110,11 @@ B<Arguments>
 
 =over 2
 
-=item $limit - an optional maximum number of tuples to create
+=item * $limit - an optional maximum number of tuples to create
 
-=item \@size - an array reference containing the number of elements in a tuple
+=item * \@size - an array reference containing the number of elements in a tuple
 
-=item @list - a list to be split into tuples
+=item * @list - a list to be split into tuples
 
 =back
 
@@ -137,6 +137,8 @@ B<Return>
 		[1, 2],
 		[3],
 		) ;
+
+=head3 Diagnostics
 
 =cut
 
@@ -165,12 +167,52 @@ if('ARRAY' eq ref $size)
 			}
 		else
 			{
-			confess 'Error: List::Tuples::tuples expects a positive tuple size!' ;
+			confess
+				(
+				'Error: List::Tuples::tuples expects tuple size to be positive!',
+				<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::tuples expects tuple size to be positive!
+
+example:
+
+	my @tuples = tuples[2] => @list ;
+	                    ^
+	                    `- size must be positive 
+
+=back
+
+=cut
+
+END_OF_POD
+				) ;
 			}
 		}
 	else
 		{
-		confess 'Error: List::Tuples::tuples expects a positive tuple size!' ;
+		confess 
+			(
+			'Error: List::Tuples::tuples expects a tuple size!',
+			<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::tuples expects a tuple size!
+
+example:
+
+	my @tuples = tuples[2] => @list ;
+	                    ^
+	                    `- size must be defined
+
+=back
+
+=cut
+
+END_OF_POD
+				) ;
 		}
 		
 	if(defined $limit)
@@ -181,13 +223,53 @@ if('ARRAY' eq ref $size)
 			}
 		else
 			{
-			confess 'Error: List::Tuples::tuples expects a positive tuple limit!' ;
+			confess 
+				(
+				'Error: List::Tuples::tuples expects tuple limit to be positive!',
+				<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::tuples expects tuple limit to be positive !
+
+example:
+
+	my @tuples = tuples 3 => [2] => @list ;
+	                    ^
+	                    `- limit must be positive 
+
+=back
+
+=cut
+
+END_OF_POD
+				) ;
 			}
 		}
 	}
 else
 	{
-	confess 'Error: List::Tuples::tuples expects an array reference as size argument!' ;
+	confess 
+		(
+		'Error: List::Tuples::tuples expects an array reference as size argument!',
+		<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::tuples expects an array reference as size argument!
+
+example:
+
+	my @tuples = tuples[2] => @list ;
+			   ^
+	                   `- size must be in an array reference
+
+=back
+
+=cut
+
+END_OF_POD
+		) ;
 	}
 	
 if(@array)
@@ -253,6 +335,8 @@ B<Return>
 
 =back
 
+=head3 Diagnostics
+
 =cut
 
 my $max = -1;
@@ -260,7 +344,28 @@ my $index = 0 ;
 
 for my $array_ref (@_)
 	{
-	confess "element $index is not an array reference!\n" unless 'ARRAY' eq ref $array_ref  ;
+	confess 
+		(
+		"Error: List::Tuples::ref_mesh: element '$index' is not an array reference!",
+		<<"END_OF_POD",
+
+=over
+
+=item * Error: List::Tuples::ref_mesh: element '$index' is not an array reference!
+
+example:
+
+	my \@list = ref_mesh([1, 2], [5, 10], [10, 20], ...) ;
+			    ^
+	                    `-  arguments must be array references
+
+=back
+
+=cut
+
+END_OF_POD
+		) unless 'ARRAY' eq ref $array_ref  ;
+		
 	$max < $#{$array_ref}   &&  ($max = $#{$array_ref} )  ;
 	
 	$index++ ;
@@ -312,11 +417,11 @@ B<Arguments>
 
 =over 2
 
-=item $limit - an optional maximum number of hashes to create
+=item * $limit - an optional maximum number of hashes to create
 
-=item \@hash_keys - an array reference containing the list of keys apply to the input array
+=item * \@hash_keys - an array reference containing the list of keys apply to the input array
 
-=item \@input_array- an array reference. the array contains the elements to extract 
+=item * \@input_array- an array reference. the array contains the elements to extract 
 
 =back
 
@@ -327,6 +432,8 @@ B<Return>
 =item * A list of hashes
 
 =back
+
+=head3 Diagnostics
 
 =cut
 
@@ -343,20 +450,80 @@ if('ARRAY' eq ref $hash_keys)
 	{
 	unless(@{$hash_keys})
 		{
-		confess 'Error: List::Tuples::hash_tuples expects a list of keys!' ;
+		confess 
+			(
+			'Error: List::Tuples::hash_tuples expects at least one key in the key list!',
+			<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::hash_tuples expects at least one key in the key list!
+
+example:
+
+	my @hashes  = hash_tuples['Mum',   'Dad',   'Children'] => @list ;
+			         ^
+				 `-  key list must contain at least one keys
+
+=back
+
+=cut
+
+END_OF_POD
+			) ;
 		}
 		
 	if(defined $limit)
 		{
 		unless($limit > 0)
 			{
-			confess 'Error: List::Tuples::hash_tuples expects a positive tuple limit!' ;
+			confess 
+				(
+				'Error: List::Tuples::hash_tuples expects tuple limit to be positive!',
+				<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::hash_tuples expects tuple limit to be positive!
+
+example:
+
+	my @hashes  = hash_tuples 3 => ['Mum',   'Dad',   'Children'] => @list ;
+			          ^
+				  `-  limit must be positive
+
+=back
+
+=cut
+
+END_OF_POD
+				) ;
 			}
 		}
 	}
 else
 	{
-	confess 'Error: List::Tuples::hash_tuples expects an array reference as size argument!' ;
+	confess 
+		(
+		'Error: List::Tuples::hash_tuples expects an array reference to define the keys!',
+		<<'END_OF_POD',
+
+=over
+
+=item * Error: List::Tuples::hash_tuples expects an array reference to define the keys!
+
+example:
+
+	my @hashes  = hash_tuples ['Mum',   'Dad',   'Children'] => @list ;
+			          ^
+				  `-  key list must be an array reference
+
+=back
+
+=cut
+
+END_OF_POD
+		) ;
 	}
 	
 if(@input_array)
