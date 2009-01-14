@@ -16,11 +16,12 @@ use Sub::Exporter -setup =>
 	};
 	
 use vars qw ($VERSION);
-$VERSION = 0.03;
+$VERSION = '0.04' ;
 }
 
 #-------------------------------------------------------------------------------
 
+use Readonly ;
 use Carp::Diagnostics qw(cluck carp croak confess) ;
 
 #-------------------------------------------------------------------------------
@@ -339,10 +340,14 @@ B<Return>
 
 =cut
 
-my $max = -1;
+my (@array_references) = @_ ;
+
+Readonly my $INVALID_MAXIMUM_VALUE => -1 ;
+
+my $max = $INVALID_MAXIMUM_VALUE ;
 my $index = 0 ;
 
-for my $array_ref (@_)
+for my $array_ref (@array_references)
 	{
 	confess 
 		(
@@ -371,7 +376,16 @@ END_OF_POD
 	$index++ ;
 	}
 
-return(map { my $ix = $_; map {$_->[$ix]} @_; } 0..$max) ;
+return
+	(
+	map 
+		{ 
+		my $ix = $_ ;
+		map {$_->[$ix]}
+			@array_references 
+		} 
+		0..$max
+	) ;
 }
 
 #-------------------------------------------------------------------------------------------------------------
@@ -475,7 +489,7 @@ END_OF_POD
 		
 	if(defined $limit)
 		{
-		unless($limit > 0)
+		if($limit <= 0)
 			{
 			confess 
 				(
